@@ -1,8 +1,18 @@
 <?php
-namespace App\Models;
-use Illuminate\Database\Eloquent\Model;
 
-class Category extends Model {
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Category extends Model
+{
+    protected $table = 'asset_categories';
+
     protected $guarded = [];
-    public function assets() { return $this->hasMany(Asset::class); }
+
+    public function assets(): HasMany
+    {
+        return $this->hasMany(Asset::class);
+    }
 }

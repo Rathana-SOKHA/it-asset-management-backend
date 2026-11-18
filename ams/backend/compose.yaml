@@ -1,0 +1,66 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:80"
+    env_file:
+      - .env
+    environment:
+      APP_URL: http://localhost:8000
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_DATABASE:-it_ams_db}
+      DB_USERNAME: it_ams
+      DB_PASSWORD: ${DB_PASSWORD:-secret}
+    volumes:
+      - .:/var/www/html
+      - vendor_data:/var/www/html/vendor
+      - build_data:/var/www/html/public/build
+    depends_on:
+      db:
+        condition: service_healthy
+    command: sh -c "rm -f bootstrap/cache/packages.php bootstrap/cache/services.php && php artisan package:discover --ansi && php artisan migrate --force && apache2-foreground"
+
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-it_ams_db}
+      MYSQL_USER: it_ams
+      MYSQL_PASSWORD: ${DB_PASSWORD:-secret}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p$${MYSQL_ROOT_PASSWORD}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  scheduler:
+    image: backend-app
+    env_file:
+      - .env
+    environment:
+      APP_URL: http://localhost:8000
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_DATABASE:-it_ams_db}
+      DB_USERNAME: it_ams
+      DB_PASSWORD: ${DB_PASSWORD:-secret}
+    volumes:
+      - .:/var/www/html
+      - vendor_data:/var/www/html/vendor
+      - build_data:/var/www/html/public/build
+    depends_on:
+      app:
+        condition: service_started
+    command: sh -c "rm -f bootstrap/cache/packages.php bootstrap/cache/services.php && php artisan package:discover --ansi && php artisan schedule:work"
+
+volumes:
+  mysql_data:
+  vendor_data:
+  build_data:

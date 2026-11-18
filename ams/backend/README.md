@@ -9,6 +9,31 @@
 
 ## About Laravel
 
+## Run with Docker
+
+Requirements: Docker Desktop with Docker Compose enabled.
+
+From this directory, prepare the environment file and start the app:
+
+```powershell
+Copy-Item .env.example .env
+docker compose build app
+docker compose run --rm --no-deps app php artisan key:generate
+docker compose up
+```
+
+The app is available at <http://localhost:8000>. Compose starts MySQL, waits for it to become healthy, and runs database migrations automatically. The default database name is `it_ams_db`; the container database user is `it_ams` with password `secret`. Override `DB_DATABASE` and `DB_PASSWORD` in `.env` to change these values.
+
+To load the demo roles, users, and asset records, run:
+
+```powershell
+docker compose exec app php artisan db:seed
+```
+
+The seeded accounts use `admin@example.com`, `itadmin@example.com`, `itstaff@example.com`, `manager@example.com`, and `employee@example.com`; each has password `password`. Change these credentials before using the app beyond local development.
+
+Stop the containers with `docker compose down`. Database data remains in a named volume. To remove it as well, run `docker compose down -v`.
+
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
 - [Simple, fast routing engine](https://laravel.com/docs/routing).
