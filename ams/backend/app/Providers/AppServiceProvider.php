@@ -22,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Gate::before(fn ($user): ?bool => $user->hasRole('Super Admin') ? true : null);
+        Gate::before(fn ($user): ?bool => $user->hasRole('Administrator') ? true : null);
 
         $trackedTables = [
             'users', 'employees', 'departments', 'assets', 'asset_assignments', 'asset_returns',

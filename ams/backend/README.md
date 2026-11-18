@@ -21,7 +21,7 @@ The API base URL is `http://localhost:8000/api`. To load demo users and records:
 docker compose exec app php artisan db:seed
 ```
 
-Demo accounts use password `password`: `admin@example.com` (Super Admin), `itadmin@example.com` (IT Admin), `itstaff@example.com` (IT Staff), `manager@example.com` (Department Manager), `employee@example.com` (Employee), and `management@example.com` (Management). These are for local development only; change or remove them before deployment.
+Demo accounts use password `@admin2026`: `admin@gmail.com` (Administrator), `itadmin@gmail.com` (IT Admin), `itstaff@gmail.com` (IT Staff), `manager@gmail.com` (Department Manager), `employee@gmail.com` (Employee), and `management@gmail.com` (Management). These are for local development only; change or remove them before deployment.
 
 ## Frontend connection
 
@@ -39,8 +39,8 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "email": "admin@example.com",
-  "password": "password"
+  "email": "admin@gmail.com",
+  "password": "@admin2026"
 }
 ```
 
@@ -166,7 +166,7 @@ Audit item status accepts `verified`, `missing`, or `damaged`. If the audit has 
 
 ### User, role, and permission administration
 
-These endpoints are restricted to Super Admin users with the `users.manage` permission.
+These endpoints are restricted to Administrator users with the `users.manage` permission.
 
 | Method | Path | Request | Response / notes |
 | --- | --- | --- | --- |
@@ -186,7 +186,7 @@ Authentication is required for every endpoint except login. Authorization is enf
 
 | Role | Typical API access |
 | --- | --- |
-| Super Admin | User/role administration and all system operations |
+| Administrator | User/role administration and all system operations |
 | IT Admin | Asset, master data, maintenance, audit, and reporting operations |
 | IT Staff | Asset operations, maintenance, inventory audits, and permitted lookups |
 | Department Manager | Department-scoped asset visibility, permitted employee/department lookups, dashboard and reports |

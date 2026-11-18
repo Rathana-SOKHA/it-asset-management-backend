@@ -22,7 +22,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    command: sh -c "rm -f bootstrap/cache/packages.php bootstrap/cache/services.php && php artisan package:discover --ansi && php artisan migrate --force && apache2-foreground"
+    command: sh -c "rm -f bootstrap/cache/packages.php bootstrap/cache/services.php && php artisan package:discover --ansi && php artisan migrate --force && php artisan db:seed --force && apache2-foreground"
 
   db:
     image: mysql:8.4

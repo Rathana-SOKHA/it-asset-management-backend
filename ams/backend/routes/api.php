@@ -21,12 +21,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('notifications', [NotificationController::class, 'index']);
     Route::patch('notifications/{notification}', [NotificationController::class, 'markRead']);
 
-    $staff = 'role:Super Admin|IT Admin|IT Staff';
-    $admin = 'role:Super Admin|IT Admin';
-    $assetReaders = 'role:Super Admin|IT Admin|IT Staff|Department Manager|Management';
+    $staff = 'role:Administrator|IT Admin|IT Staff';
+    $admin = 'role:Administrator|IT Admin';
+    $assetReaders = 'role:Administrator|IT Admin|IT Staff|Department Manager|Management';
     $res = 'employees|departments|locations|categories|brands|suppliers|purchases|warranties';
 
-    Route::middleware(['role:Super Admin|IT Admin|Department Manager|Management', 'permission:reports.view'])->get('dashboard/stats', [DashboardController::class, 'stats']);
+    Route::middleware(['role:Administrator|IT Admin|Department Manager|Management', 'permission:reports.view'])->get('dashboard/stats', [DashboardController::class, 'stats']);
 
     Route::middleware($assetReaders)->group(function () {
         Route::middleware('permission:assets.view')->group(function () {
@@ -50,7 +50,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('{resource}/{id}', [CrudController::class, 'update'])->where('resource', $res);
         Route::delete('{resource}/{id}', [CrudController::class, 'destroy'])->where('resource', $res);
     });
-    Route::middleware('role:Super Admin|IT Admin|IT Staff|Department Manager')->group(function () use ($res) {
+    Route::middleware('role:Administrator|IT Admin|IT Staff|Department Manager')->group(function () use ($res) {
         Route::get('{resource}', [CrudController::class, 'index'])->where('resource', $res);
     });
 
@@ -61,7 +61,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     Route::middleware($admin)->delete('maintenances/{id}', [CrudController::class, 'destroy'])->defaults('resource', 'maintenances');
 
-    Route::middleware(['role:Super Admin|IT Admin', 'permission:activity-logs.view'])->get('activity-logs', [ActivityLogController::class, 'index']);
+    Route::middleware(['role:Administrator|IT Admin', 'permission:activity-logs.view'])->get('activity-logs', [ActivityLogController::class, 'index']);
 
     Route::middleware([$staff, 'permission:inventory-audits.manage'])->group(function () {
         Route::apiResource('inventory-audits', InventoryAuditController::class);
@@ -72,8 +72,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('reports/assets.csv', [ReportController::class, 'assetsCsv'])->middleware('permission:reports.view');
     });
 
-    // user & role management (Super Admin only)
-    Route::middleware(['role:Super Admin', 'permission:users.manage'])->group(function () {
+    // user & role management (Administrator only)
+    Route::middleware(['role:Administrator', 'permission:users.manage'])->group(function () {
         Route::apiResource('users', UserController::class)->except(['show']);
         Route::post('users/{user}/role', [UserController::class, 'assignRole']);
         Route::post('users/{user}/password', [UserController::class, 'resetPassword']);

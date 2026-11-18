@@ -18,7 +18,7 @@ class NotifyAssetAlerts extends Command
 
     public function handle(): int
     {
-        $admins = User::role(['Super Admin', 'IT Admin'])->get();
+        $admins = User::role(['Administrator', 'IT Admin'])->get();
         foreach (Warranty::with('asset')->whereBetween('end_date', [now()->toDateString(), now()->addDays(30)->toDateString()])->get() as $w) {
             $this->notifyOnce($admins, "Warranty for {$w->asset->asset_tag} expires {$w->end_date}");
         }

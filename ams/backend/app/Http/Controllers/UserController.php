@@ -73,7 +73,7 @@ class UserController extends Controller
     public function assignRole(Request $request, User $user)
     {
         $roleName = $request->validate(['role' => 'required|string|exists:roles,name'])['role'];
-        abort_if($user->is($request->user()) && $roleName !== 'Super Admin', 422, 'You cannot remove your own administrator role.');
+        abort_if($user->is($request->user()) && $roleName !== 'Administrator', 422, 'You cannot remove your own administrator role.');
         $user->syncRoles($roleName);
 
         return $user->load('roles');

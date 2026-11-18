@@ -31,8 +31,8 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "email": "admin@example.com",
-  "password": "password"
+  "email": "admin@gmail.com",
+  "password": "@admin2026"
 }
 ```
 
@@ -43,10 +43,10 @@ A successful login returns:
   "token": "<personal-access-token>",
   "user": {
     "id": 1,
-    "name": "Super Admin",
-    "email": "admin@example.com",
+    "name": "Administrator",
+    "email": "admin@gmail.com",
     "employee_id": null,
-    "roles": ["Super Admin"]
+    "roles": ["Administrator"]
   }
 }
 ```
@@ -157,7 +157,7 @@ Attachment uploads use `multipart/form-data` with a `file` field. Allowed file t
 
 ### User and role administration
 
-These endpoints require the Super Admin role and `users.manage` permission.
+These endpoints require the Administrator role and `users.manage` permission.
 
 | Method | Path | Purpose |
 | --- | --- | --- |

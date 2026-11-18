@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        $roleNames = ['Super Admin', 'IT Admin', 'IT Staff', 'Department Manager', 'Employee', 'Management'];
+        $roleNames = ['Administrator', 'IT Admin', 'IT Staff', 'Department Manager', 'Employee', 'Management'];
         foreach ($roleNames as $roleName) {
             Role::findOrCreate($roleName, 'web');
         }
@@ -35,7 +35,7 @@ class DatabaseSeeder extends Seeder
         }
 
         $rolePermissions = [
-            'Super Admin' => $permissionNames,
+            'Administrator' => $permissionNames,
             'IT Admin' => array_diff($permissionNames, ['users.manage', 'permissions.manage']),
             'IT Staff' => ['assets.view', 'assets.create', 'assets.update', 'assets.return', 'maintenance.manage', 'inventory-audits.manage', 'reports.view', 'employees.view', 'departments.view', 'locations.view', 'assets.catalog.view', 'warranties.view'],
             'Department Manager' => ['assets.view', 'reports.view', 'employees.view', 'departments.view', 'assets.catalog.view'],
@@ -60,7 +60,7 @@ class DatabaseSeeder extends Seeder
 
         foreach (
             [
-                'Super Admin' => 'admin',
+                'Administrator' => 'admin',
                 'IT Admin' => 'itadmin',
                 'IT Staff' => 'itstaff',
                 'Department Manager' => 'manager',
@@ -68,19 +68,28 @@ class DatabaseSeeder extends Seeder
                 'Management' => 'management',
             ] as $roleName => $loginName
         ) {
-            $user = User::firstOrCreate(
-                ['email' => "$loginName@example.com"],
+            $legacyEmail = "$loginName@example.com";
+            $email = "$loginName@gmail.com";
+
+            $legacyUser = User::where('email', $legacyEmail)->first();
+            if ($legacyUser && ! User::where('email', $email)->exists()) {
+                $legacyUser->email = $email;
+                $legacyUser->save();
+            }
+
+            $user = User::updateOrCreate(
+                ['email' => $email],
                 [
                     'name' => $roleName,
-                    'password' => Hash::make('password'),
+                    'password' => Hash::make('@admin2026'),
                     'employee_id' => $roleName === 'Employee' ? $employee->id : null,
+                    'is_active' => true,
                 ],
             );
-            $user->forceFill(['is_active' => true])->save();
             $user->syncRoles($roleName);
         }
 
-        $department->update(['manager_id' => User::where('email', 'manager@example.com')->value('id')]);
+        $department->update(['manager_id' => User::where('email', 'manager@gmail.com')->value('id')]);
 
         $asset = Asset::firstOrCreate(
             ['asset_tag' => 'LT-0001'],
